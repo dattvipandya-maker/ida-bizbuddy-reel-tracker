@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f6f6f0">
+<title>IDA × BizBuddy — Reel Work Tracker</title>
+<style>
+:root{color-scheme:light;--bg:#f6f6f0;--card:#fff;--ink:#202820;--muted:#73796f;--green:#245b43;--green-dark:#194331;--green-soft:#eaf2ec;--gold:#c7a45a;--line:#e6e8df;--track:#e9ece5;--shadow:0 8px 30px rgba(30,50,35,.045)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{width:min(1060px,100%);margin:0 auto;padding:42px 28px 60px}
+.topline{display:flex;align-items:center;gap:10px;margin-bottom:26px}.mark{width:34px;height:34px;border-radius:11px;background:var(--green);color:#fff;display:grid;place-items:center;font-size:12px;font-weight:800;letter-spacing:-.5px}.eyebrow{font-size:11px;font-weight:750;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase}
+h1{font-size:clamp(27px,4vw,38px);line-height:1.12;letter-spacing:-1.25px;margin:0;font-weight:730}h1 span{color:var(--green)}.sub{color:var(--muted);margin:10px 0 28px;font-size:14px}
+.overview{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px 24px 20px;box-shadow:var(--shadow);margin-bottom:22px}.overview-head{display:flex;align-items:flex-start;justify-content:space-between;gap:20px}.metric-label{font-size:12px;color:var(--muted);font-weight:600}.metric-value{font-size:25px;font-weight:750;letter-spacing:-.6px;margin-top:5px}.metric-value small{font-size:14px;color:var(--muted);font-weight:550;letter-spacing:0}.stats{display:flex;gap:32px}.percentage{font-size:28px;font-weight:750;color:var(--green);letter-spacing:-1px}.progress-track{height:7px;border-radius:20px;background:var(--track);overflow:hidden;margin-top:20px}.progress-fill{height:100%;width:0;background:var(--green);border-radius:20px;transition:width .22s ease}.progress-caption{display:flex;justify-content:space-between;gap:12px;margin-top:9px;font-size:11px;color:var(--muted)}
+.toolbar{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:26px 0 14px}.tabs{display:flex;gap:5px;background:#eceee7;border:1px solid #e4e6dd;padding:4px;border-radius:12px}.tab{border:0;background:transparent;color:#626b60;font:inherit;font-size:13px;font-weight:650;padding:10px 14px;border-radius:9px;cursor:pointer;white-space:nowrap}.tab[aria-selected=true]{background:#fff;color:var(--green-dark);box-shadow:0 1px 4px #1b332011}.tab-count{display:inline-grid;place-items:center;margin-left:5px;font-size:10px;color:inherit;background:#00000008;border-radius:6px;padding:2px 5px}
+.search-wrap{position:relative;width:min(255px,40%)}.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#858b81;font-size:17px;pointer-events:none}.search{width:100%;border:1px solid var(--line);background:#fff;border-radius:11px;padding:11px 13px 11px 36px;color:var(--ink);font:inherit;font-size:13px;outline:none}.search:focus{border-color:#8ba997;box-shadow:0 0 0 3px #245b4312}
+.list-head{display:flex;justify-content:space-between;align-items:center;padding:4px 4px 10px;color:var(--muted);font-size:11px;font-weight:650;letter-spacing:.2px}.reel-list{display:grid;gap:9px}.reel{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:17px 18px;box-shadow:0 2px 9px #182b1805}.reel-top{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:15px}.reel-name{display:flex;align-items:center;gap:11px;min-width:0}.number{flex:0 0 29px;width:29px;height:29px;display:grid;place-items:center;border-radius:9px;background:#f1f3ed;color:#727a6e;font-size:11px;font-weight:750}.name{font-size:14px;font-weight:670;line-height:1.4;overflow-wrap:anywhere}.status{font-size:11px;font-weight:650;color:#7a8076;white-space:nowrap;border-radius:20px;padding:6px 9px;background:#f3f4ef}.status.progress{color:var(--green);background:var(--green-soft)}.status.complete{color:#fff;background:var(--green)}
+.stages{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}.stage{display:flex;align-items:center;gap:8px;min-width:0;color:#666e63;font-size:11px;line-height:1.3;cursor:pointer;user-select:none}.stage input{appearance:none;flex:0 0 16px;width:16px;height:16px;margin:0;border:1.5px solid #cbd0c5;border-radius:5px;background:#fff;display:grid;place-items:center;cursor:pointer;transition:background .15s,border-color .15s}.stage input:checked{background:var(--green);border-color:var(--green)}.stage input:checked:after{content:"";width:7px;height:4px;border-left:1.8px solid white;border-bottom:1.8px solid white;transform:rotate(-45deg) translate(1px,-1px)}.stage:has(input:checked){color:#334c3c}.stage input:focus-visible{outline:3px solid #c9ddce;outline-offset:2px}
+.empty{background:#fff;border:1px dashed var(--line);border-radius:15px;text-align:center;padding:38px 20px;color:var(--muted);font-size:13px}.footer{display:flex;justify-content:space-between;gap:15px;margin-top:18px;color:#858b80;font-size:11px}.saved{display:flex;align-items:center;gap:6px}.saved:before{content:"";width:6px;height:6px;background:#79a585;border-radius:50%}
+@media(max-width:700px){.wrap{padding:27px 16px 40px}.sub{margin-bottom:21px}.overview{padding:18px}.stats{gap:22px}.metric-value{font-size:22px}.toolbar{align-items:stretch;flex-direction:column}.tabs{width:100%}.tab{flex:1;padding:10px 8px;font-size:12px}.search-wrap{width:100%}.reel{padding:15px}.stages{grid-template-columns:repeat(2,minmax(0,1fr));gap:13px 10px}.stage:last-child{grid-column:1 / -1}.reel-top{margin-bottom:16px}.name{font-size:13px}.footer{flex-direction:column;gap:8px}}
+@media(max-width:370px){.wrap{padding-inline:11px}.stats{gap:14px}.metric-value{font-size:20px}.overview-head{gap:8px}.percentage{font-size:24px}.stage{font-size:10.5px}.reel{padding:13px}.tab{font-size:11px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important;scroll-behavior:auto!important}}
+</style>
+
+<style>
+/* Responsive dashboard + mobile-app styling. Existing tracker logic is unchanged. */
+:root{
+  --bg:#f4f5ef;--card:#ffffff;--ink:#202820;--muted:#73796f;
+  --green:#245b43;--green-dark:#194331;--green-soft:#eaf2ec;
+  --gold:#c7a45a;--line:#e2e6dc;--track:#e9ece5;
+  --shadow:0 10px 30px rgba(30,50,35,.055);
+}
+html{scroll-behavior:smooth}
+body{background:radial-gradient(ellipse at top left,#edf2e9 0,transparent 42%),var(--bg)}
+.wrap{width:min(1160px,100%);padding:34px 30px 64px}
+.topline{margin-bottom:22px}
+.mark{width:40px;height:40px;border-radius:13px;box-shadow:0 5px 14px #245b4322}
+.eyebrow{letter-spacing:1.7px}
+h1{font-size:clamp(30px,4vw,42px);letter-spacing:-1.5px}
+.sub{font-size:14px;margin:10px 0 26px}
+.overview{border-radius:22px;padding:25px 27px 22px;box-shadow:var(--shadow);border-color:#e3e7dd}
+.metric-value{font-size:29px}
+.percentage{font-size:31px}
+.progress-track{height:9px;background:#edf0e9;margin-top:22px}
+.progress-fill{background:linear-gradient(90deg,#245b43,#4d8b68)}
+.toolbar{margin:28px 0 16px;gap:18px}
+.tabs{border-radius:14px;padding:5px;background:#e9ede5;border-color:#e1e6dc}
+.tab{padding:11px 17px;border-radius:10px;transition:background .15s,color .15s,transform .15s}
+.tab:hover{color:var(--green-dark)}
+.tab[aria-selected=true]{background:#fff;color:var(--green-dark);box-shadow:0 3px 10px #1b332010}
+.search{border-radius:13px;padding-top:12px;padding-bottom:12px}
+.list-head{padding:8px 5px 12px;letter-spacing:.7px}
+.reel-list{gap:12px}
+.reel{border-radius:18px;padding:19px 20px;border-color:#e4e8df;box-shadow:0 4px 15px #182b1805;transition:transform .16s,box-shadow .16s}
+.reel:hover{transform:translateY(-1px);box-shadow:0 9px 22px #182b180a}
+.number{width:34px;height:34px;flex-basis:34px;border-radius:11px;background:#edf2eb;color:var(--green);font-weight:800}
+.name{font-size:14px}
+.status{padding:7px 11px}
+.stage{font-size:11.5px;gap:9px}
+.stage input{width:18px;height:18px;flex-basis:18px;border-radius:6px}
+.footer{padding:7px 4px 0}
+.empty{border-radius:18px}
+@media(min-width:900px){
+  .wrap{padding-top:42px}
+  .overview{margin-bottom:24px}
+  .reel-list{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}
+  .reel{min-width:0}
+  .stages{grid-template-columns:repeat(2,minmax(0,1fr));gap:13px 10px}
+  .stage:last-child{grid-column:auto}
+  .reel-top{align-items:flex-start}
+  .name{font-size:14px}
+}
+@media(max-width:700px){
+  body{padding-bottom:94px}
+  .wrap{padding:24px 15px 28px}
+  .topline{margin-bottom:19px}
+  .mark{width:37px;height:37px}
+  h1{font-size:32px;letter-spacing:-1.1px}
+  .sub{font-size:13px;line-height:1.5;margin:9px 0 20px}
+  .overview{padding:18px 17px 17px;border-radius:19px;margin-bottom:20px}
+  .overview-head{gap:12px}
+  .stats{gap:20px}
+  .metric-label{font-size:10.5px}
+  .metric-value{font-size:23px}
+  .percentage{font-size:26px}
+  .progress-track{margin-top:18px}
+  .toolbar{margin:19px 0 13px;gap:12px;flex-direction:column}
+  .tabs{position:fixed;left:12px;right:12px;bottom:12px;z-index:20;width:auto;justify-content:stretch;padding:6px;border:1px solid #dfe5da;background:rgba(255,255,255,.96);box-shadow:0 8px 30px rgba(22,43,28,.18);backdrop-filter:blur(14px);border-radius:17px}
+  .tab{flex:1;white-space:normal;min-height:46px;padding:9px 7px;font-size:11.5px;line-height:1.25}
+  .tab-count{margin-left:3px}
+  .search-wrap{width:100%}
+  .search{font-size:14px;min-height:45px}
+  .list-head{padding:5px 3px 10px}
+  .reel-list{grid-template-columns:1fr;gap:10px}
+  .reel{padding:16px 15px;border-radius:17px}
+  .reel-top{gap:9px;margin-bottom:16px}
+  .reel-name{gap:9px}
+  .number{width:31px;height:31px;flex-basis:31px}
+  .name{font-size:13px}
+  .status{font-size:10px;padding:6px 8px}
+  .stages{grid-template-columns:repeat(2,minmax(0,1fr));gap:13px 9px}
+  .stage{font-size:10.5px;align-items:flex-start;line-height:1.4}
+  .stage:last-child{grid-column:1 / -1}
+  .footer{font-size:10.5px;line-height:1.5;margin-top:16px}
+}
+@media(max-width:370px){
+  .wrap{padding-inline:11px}
+  .stats{gap:13px}
+  .metric-value{font-size:20px}
+  .percentage{font-size:23px}
+  .tab{font-size:10.5px}
+  .reel{padding:14px 12px}
+  .stage{font-size:10px}
+}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*:before,*:after{transition:none!important}
+}
+</style>
+
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#245b43">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="IDA Tracker">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+
+
+<style>
+.auth-shell{min-height:100vh;display:grid;place-items:center;padding:24px;background:radial-gradient(ellipse at top left,#edf2e9 0,transparent 42%),var(--bg)}
+.auth-card{width:min(440px,100%);background:#fff;border:1px solid var(--line);border-radius:20px;padding:26px;box-shadow:var(--shadow)}
+.auth-card h2{margin:0 0 8px;font-size:25px;letter-spacing:-.5px}.auth-card p{color:var(--muted);font-size:13px;line-height:1.5;margin:0 0 20px}.auth-field{display:grid;gap:6px;margin:12px 0;font-size:12px;font-weight:650}.auth-field input{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;font:inherit;font-size:14px}.auth-actions{display:flex;gap:8px;margin-top:16px}.auth-btn{flex:1;padding:11px 13px;border-radius:10px;border:1px solid var(--line);background:#fff;color:var(--green-dark);font-weight:700;cursor:pointer}.auth-btn.primary{background:var(--green);color:white;border-color:var(--green)}.auth-note{min-height:20px;margin-top:12px!important;color:var(--green)!important}.accountbar{display:flex;justify-content:flex-end;align-items:center;gap:10px;margin-bottom:12px;font-size:12px;color:var(--muted)}.accountbar button{border:1px solid var(--line);background:white;border-radius:9px;padding:7px 10px;cursor:pointer;color:var(--green-dark);font-weight:650}
+[hidden]{display:none!important}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+</head>
+<body>
+<section class="auth-shell" id="authShell">
+  <div class="auth-card">
+    <div class="topline"><div class="mark">IDA</div><div class="eyebrow">Creative production workspace</div></div>
+    <h2 id="authTitle">Welcome to the Reel Tracker</h2>
+    <p>Sign in to access the shared IDA × BizBuddy team tracker. New team members can create an account here.</p>
+    <form id="authForm">
+      <label class="auth-field" id="nameField" hidden>Full name<input id="authName" autocomplete="name" maxlength="80" placeholder="Your name"></label>
+      <label class="auth-field">Email<input id="authEmail" type="email" autocomplete="email" required placeholder="you@company.com"></label>
+      <label class="auth-field">Password<input id="authPassword" type="password" autocomplete="current-password" minlength="8" required placeholder="At least 8 characters"></label>
+      <div class="auth-actions"><button class="auth-btn primary" id="authSubmit" type="submit">Log in</button><button class="auth-btn" id="toggleSignup" type="button">Create account</button></div>
+      <p class="auth-note" id="authMessage" role="status" aria-live="polite"></p>
+    </form>
+  </div>
+</section>
+<main class="wrap" id="trackerApp" hidden>
+  <div class="accountbar"><span id="accountLabel"></span><button type="button" id="logoutBtn">Log out</button></div>
+  <div class="topline"><div class="mark" aria-hidden="true">IDA</div><div class="eyebrow">Creative production workspace</div></div>
+  <h1>Reel Work <span>Tracker</span></h1>
+  <p class="sub">One clear workflow. Progress saved automatically on this device.</p>
+
+  <section class="overview" aria-label="Overall progress">
+    <div class="overview-head">
+      <div class="stats">
+        <div><div class="metric-label">Stages completed</div><div class="metric-value"><span id="doneStages">0</span> <small>/ 115</small></div></div>
+        <div><div class="metric-label">Reels completed</div><div class="metric-value"><span id="doneReels">0</span> <small>/ 23</small></div></div>
+      </div>
+      <div style="text-align:right"><div class="metric-label">Overall progress</div><div class="percentage" id="percent">0%</div></div>
+    </div>
+    <div class="progress-track" role="progressbar" aria-label="Overall workflow progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progressBar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-caption"><span id="remaining">115 stages remaining</span><span>Across both brands</span></div>
+  </section>
+
+  <div class="toolbar">
+    <div class="tabs" id="companyTabs" role="tablist" aria-label="Select company"></div>
+    <button type="button" class="tab" id="manageCompanies" style="border:1px solid var(--line);background:#fff;border-radius:10px">＋ Add Company</button>
+    <button type="button" class="tab" id="deleteCompanyBtn" style="border:1px solid #f0d8d5;background:#fff8f7;color:#a33c32;border-radius:10px">Delete Company</button>
+    <form id="companyForm" hidden style="padding:12px;background:#fff;border:1px solid var(--line);border-radius:12px;gap:8px">
+      <label style="font-size:12px;font-weight:650;display:grid;gap:5px">Company name
+        <input id="newCompanyName" maxlength="50" required placeholder="e.g. Care First Global" style="padding:10px;border:1px solid var(--line);border-radius:9px">
+      </label>
+      <div style="display:flex;gap:8px">
+        <button type="submit" class="btn-primary" style="padding:9px 12px;border-radius:9px">Add company</button>
+        <button type="button" id="cancelCompany" class="btn-secondary" style="padding:9px 12px;border-radius:9px">Cancel</button>
+      </div>
+    </form>
+    <label class="search-wrap"><span class="search-icon" aria-hidden="true">⌕</span><input class="search" id="search" type="search" placeholder="Search reels..." aria-label="Search reels by name" autocomplete="off"></label>
+  </div>
+
+
+<section class="add-panel" style="margin:0 0 16px;background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden">
+<button type="button" id="addToggle" style="width:100%;padding:15px;text-align:left;border:0;background:transparent;cursor:pointer;color:var(--green);font-weight:700">＋ Add a reel task <span style="float:right">＋</span></button>
+<form id="addForm" hidden style="padding:0 15px 16px;gap:10px">
+<label style="display:grid;gap:5px;font-size:12px">Task name<input id="newReelName" maxlength="100" required placeholder="e.g. Diwali campaign reel" style="padding:11px;border:1px solid var(--line);border-radius:9px"></label>
+<label style="display:grid;gap:5px;font-size:12px">Brand<select id="newReelBrand" style="padding:11px;border:1px solid var(--line);border-radius:9px"><option value="bizbuddy">BizBuddy</option><option value="ida">Indian Digital Ads (IDA)</option></select></label>
+<div style="display:flex;gap:8px"><button type="submit" style="padding:10px 14px;background:var(--green);color:white;border:0;border-radius:9px;cursor:pointer">Add task</button><button type="button" id="cancelAdd" style="padding:10px 14px;border:1px solid var(--line);background:white;border-radius:9px;cursor:pointer">Cancel</button></div>
+<small style="color:var(--muted)">New tasks start with all five stages unchecked.</small>
+</form></section>
+
+  <div class="list-head"><span id="listTitle">BIZBUDDY REELS</span><span id="visibleCount">13 reels</span></div>
+  <section class="reel-list" id="reelList" role="tabpanel" aria-labelledby="bizTab"></section>
+  <div class="footer"><span>Changes save automatically in this browser.</span><span class="saved" id="saveStatus" role="status" aria-live="polite">Progress saved locally</span></div>
+</main>
+<script>
+"use strict";
+const SUPABASE_URL="https://cwawggxyyaalaaffhsd.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY="sb_publishable_kz-Okk_nr7XwNJu_KDV0rA_11JSVja8";
+const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
+const STAGES=["Prompt Creation","Scene Creation","Google Flow Video Generation","Editing","Final Upload"];
+const BASE_COMPANIES=[
+ {name:"BizBuddy",baseNames:["Are You Selling the Right Product?","Who Is Your Ideal Customer?","Why Should Customers Choose You?","Are You Pricing Your Product Correctly?","Quality vs Cost","Packaging Is More Than a Box","Don't Launch Without Testing","Know Your Competition","Your Product Must Evolve","Too Many Choices Can Confuse Customers","Is It the Right Time to Launch?","Can Customers Understand Your Value?","Can Your Product Scale?"]},
+ {name:"Indian Digital Ads",baseNames:["Jewellery & Luxury","Skincare & Beauty","Fashion & Apparel","Restaurants & Cafes","Real Estate & Property Developers","Fitness & Gym","Perfume & Fragrance","Bakery, Sweets & Food","Hotels, Resorts & Hospitality","Interior Design & Furniture"]}
+];
+const $=id=>document.getElementById(id);
+let currentUser=null, profileName="", companies=[], allReels=[], activeBrand=null, isSignup=false, loading=false;
+function setAuthMessage(message,isError=false){const el=$("authMessage");el.textContent=message;el.style.color=isError?"#a33c32":"var(--green)";}
+function setSignupMode(value){isSignup=value;$("authTitle").textContent=value?"Create your team account":"Welcome to the Reel Tracker";$("nameField").hidden=!value;$("authName").required=value;$("authPassword").autocomplete=value?"new-password":"current-password";$("authSubmit").textContent=value?"Create account":"Log in";$("toggleSignup").textContent=value?"Back to login":"Create account";setAuthMessage("");}
+$("toggleSignup").addEventListener("click",()=>setSignupMode(!isSignup));
+$("authForm").addEventListener("submit",async e=>{
+ e.preventDefault();if(loading)return;loading=true;$("authSubmit").disabled=true;setAuthMessage(isSignup?"Creating your account…":"Signing in…");
+ const email=$("authEmail").value.trim(),password=$("authPassword").value;
+ try{
+  if(isSignup){
+   const full_name=$("authName").value.trim();
+   const {data,error}=await supabaseClient.auth.signUp({email,password,options:{data:{full_name},emailRedirectTo:location.origin+location.pathname}});
+   if(error)throw error;
+   if(data.session){setAuthMessage("Account created. Opening tracker…");await startApp(data.session.user);}
+   else setAuthMessage("Account created. Check your email for a confirmation link, then return here and log in.");
+  }else{
+   const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});if(error)throw error;await startApp(data.user);
+  }
+ }catch(err){setAuthMessage(err.message||"Could not authenticate. Please try again.",true)}finally{loading=false;$("authSubmit").disabled=false;}
+});
+$("logoutBtn").addEventListener("click",async()=>{await supabaseClient.auth.signOut();currentUser=null;$("trackerApp").hidden=true;$("authShell").hidden=false;setSignupMode(false);});
+function statusFor(r){const n=r.stages.filter(x=>x.is_completed).length;return n===5?"complete":n?"progress":"not-started";}
+function renderTabs(){const tabs=$("companyTabs");tabs.replaceChildren();companies.forEach(c=>{const b=document.createElement("button");b.type="button";b.className="tab";b.setAttribute("role","tab");b.setAttribute("aria-selected",String(c.id===activeBrand));const label=document.createElement("span");label.textContent=c.name;b.append(label);const count=document.createElement("span");count.className="tab-count";count.textContent=allReels.filter(r=>r.company_id===c.id).length;b.append(count);b.addEventListener("click",()=>{activeBrand=c.id;renderTabs();render();});tabs.append(b);});}
+function updateProgress(){const ds=allReels.reduce((sum,r)=>sum+r.stages.filter(x=>x.is_completed).length,0),dr=allReels.filter(r=>r.stages.length===5&&r.stages.every(x=>x.is_completed)).length,total=allReels.length*5,p=total?Math.round(ds/total*100):0;$("doneStages").textContent=ds;$("doneReels").textContent=dr;$("percent").textContent=p+"%";$("remaining").textContent=(total-ds)+" stages remaining";$("progressFill").style.width=p+"%";$("progressBar").setAttribute("aria-valuenow",String(p));document.querySelectorAll(".metric-value small")[0].textContent="/ "+total;document.querySelectorAll(".metric-value small")[1].textContent="/ "+allReels.length;renderTabs();}
+function render(){const q=$("search").value.trim().toLocaleLowerCase(),list=$("reelList");list.replaceChildren();const company=companies.find(c=>c.id===activeBrand);const reels=allReels.filter(r=>r.company_id===activeBrand&&r.title.toLocaleLowerCase().includes(q));$("listTitle").textContent=(company?company.name:"COMPANY")+" REELS";$("visibleCount").textContent=`${reels.length} ${reels.length===1?"task":"tasks"}`;$("reelList").setAttribute("aria-labelledby","companyTabs");
+ if(!reels.length){const e=document.createElement("div");e.className="empty";e.textContent="No tasks yet. Use “Add a reel task” to create one.";list.append(e);return;}
+ reels.forEach((r,index)=>{const state=statusFor(r),card=document.createElement("article");card.className="reel";const top=document.createElement("div");top.className="reel-top";const nw=document.createElement("div");nw.className="reel-name";const num=document.createElement("span");num.className="number";num.textContent=String(index+1).padStart(2,"0");const name=document.createElement("div");name.className="name";name.textContent=r.title;nw.append(num,name);const actions=document.createElement("div");actions.style.cssText="display:flex;align-items:center;gap:7px;flex-shrink:0";const badge=document.createElement("span");badge.className="status"+(state==="progress"?" progress":state==="complete"?" complete":"");badge.textContent=state==="complete"?"Complete":state==="progress"?"In progress":"Not started";actions.append(badge);
+ if(r.created_by===currentUser.id){const del=document.createElement("button");del.type="button";del.textContent="Delete";del.style.cssText="border:1px solid #f0d8d5;background:#fff8f7;color:#a33c32;border-radius:8px;padding:6px 8px;font-size:10px;cursor:pointer";del.addEventListener("click",async()=>{if(!confirm(`Delete task \"${r.title}\"? This cannot be undone.`))return;const {error}=await supabaseClient.from("reels").delete().eq("id",r.id);if(error){alert(error.message);return;}await loadTrackerData();});actions.append(del);}
+ top.append(nw,actions);const stages=document.createElement("div");stages.className="stages";STAGES.forEach((stageName,i)=>{const stage=r.stages.find(x=>x.stage_name===stageName);const label=document.createElement("label");label.className="stage";const input=document.createElement("input");input.type="checkbox";input.checked=!!stage?.is_completed;input.setAttribute("aria-label",`${r.title}: ${stageName}`);input.addEventListener("change",async()=>{input.disabled=true;const complete=input.checked;const {error}=await supabaseClient.from("reel_stages").update({is_completed:complete,completed_by:complete?currentUser.id:null,completed_at:complete?new Date().toISOString():null}).eq("id",stage.id);if(error){alert("Could not save stage: "+error.message);input.checked=!complete;}else{stage.is_completed=complete;stage.completed_by=complete?currentUser.id:null;stage.completed_at=complete?new Date().toISOString():null;render();updateProgress();}input.disabled=false;});const text=document.createElement("span");text.textContent=stageName;label.append(input,text);stages.append(label);});card.append(top,stages);list.append(card);});}
+async function ensureBaseData(){
+ const {data:existingCompanies,error:companiesError}=await supabaseClient.from("companies").select("id,name");if(companiesError)throw companiesError;
+ for(const base of BASE_COMPANIES){if(!existingCompanies.some(c=>c.name===base.name)){const {error}=await supabaseClient.from("companies").insert({name:base.name});if(error&&error.code!=="23505")throw error;}}
+ const {data:allCompanies,error:loadError}=await supabaseClient.from("companies").select("id,name").order("created_at");if(loadError)throw loadError;
+ for(const base of BASE_COMPANIES){const company=allCompanies.find(c=>c.name===base.name);if(!company)continue;const {data:rows,error}=await supabaseClient.from("reels").select("id,title").eq("company_id",company.id);if(error)throw error;const have=new Set((rows||[]).map(r=>r.title));const missing=base.baseNames.filter(title=>!have.has(title));if(missing.length){const {error:insertError}=await supabaseClient.from("reels").insert(missing.map(title=>({company_id:company.id,title,created_by:currentUser.id})));if(insertError)throw insertError;}}
+}
+async function loadTrackerData(){
+ const [{data:companyRows,error:cError},{data:reelRows,error:rError}]=await Promise.all([supabaseClient.from("companies").select("id,name,created_at").order("created_at"),supabaseClient.from("reels").select("id,company_id,title,created_by,created_at").order("created_at")]);if(cError)throw cError;if(rError)throw rError;
+ const {data:stageRows,error:sError}=await supabaseClient.from("reel_stages").select("id,reel_id,stage_name,is_completed,completed_by,completed_at");if(sError)throw sError;
+ companies=companyRows||[];allReels=(reelRows||[]).map(r=>({id:r.id,company_id:r.company_id,title:r.title,created_by:r.created_by,stages:STAGES.map(n=>stageRows.find(s=>s.reel_id===r.id&&s.stage_name===n)).filter(Boolean)})).filter(r=>r.stages.length===5);
+ if(!companies.some(c=>c.id===activeBrand))activeBrand=(companies.find(c=>c.name==="BizBuddy")||companies[0])?.id;
+ const select=$("newReelBrand");select.replaceChildren();companies.forEach(c=>{const o=document.createElement("option");o.value=c.id;o.textContent=c.name;select.append(o);});select.value=activeBrand||"";
+ $("saveStatus").textContent="Shared progress synced";render();updateProgress();
+}
+async function startApp(user){currentUser=user;$("authShell").hidden=true;$("trackerApp").hidden=false;$("accountLabel").textContent=user.email||"Team member";$("saveStatus").textContent="Connecting to shared tracker…";try{await ensureBaseData();await loadTrackerData();}catch(err){console.error(err);alert("Could not load shared tracker. Check Supabase policies and table setup: "+(err.message||err));$("saveStatus").textContent="Sync error — see message";}}
+supabaseClient.auth.onAuthStateChange((event,session)=>{if(session?.user&&!currentUser){setTimeout(()=>startApp(session.user),0);}else if(!session?.user&&currentUser){currentUser=null;$("trackerApp").hidden=true;$("authShell").hidden=false;}});
+$("search").addEventListener("input",render);
+$("addToggle").addEventListener("click",()=>{$("addForm").hidden=!$("addForm").hidden;$("addForm").style.display=$("addForm").hidden?"none":"grid";$("newReelBrand").value=activeBrand;if(!$("addForm").hidden)$("newReelName").focus();});
+$("cancelAdd").addEventListener("click",()=>{$("addForm").hidden=true;$("addForm").style.display="none";});
+$("addForm").addEventListener("submit",async e=>{e.preventDefault();const title=$("newReelName").value.trim(),company_id=$("newReelBrand").value;if(!title)return;if(allReels.some(r=>r.company_id===company_id&&r.title.toLowerCase()===title.toLowerCase())){alert("A task with this name already exists for this company.");return;}const {error}=await supabaseClient.from("reels").insert({title,company_id,created_by:currentUser.id});if(error){alert("Could not add task: "+error.message);return;}$("newReelName").value="";$("addForm").hidden=true;$("addForm").style.display="none";activeBrand=company_id;await loadTrackerData();});
+$("manageCompanies").addEventListener("click",()=>{$("companyForm").hidden=!$("companyForm").hidden;$("companyForm").style.display=$("companyForm").hidden?"none":"grid";if(!$("companyForm").hidden)$("newCompanyName").focus();});
+$("cancelCompany").addEventListener("click",()=>{$("companyForm").hidden=true;$("companyForm").style.display="none";});
+$("companyForm").addEventListener("submit",async e=>{e.preventDefault();const name=$("newCompanyName").value.trim();if(!name)return;if(companies.some(c=>c.name.toLowerCase()===name.toLowerCase())){alert("This company already exists.");return;}const {data,error}=await supabaseClient.from("companies").insert({name}).select("id,name").single();if(error){alert("Could not add company: "+error.message);return;}$("newCompanyName").value="";$("companyForm").hidden=true;$("companyForm").style.display="none";activeBrand=data.id;await loadTrackerData();});
+$("deleteCompanyBtn").addEventListener("click",async()=>{const company=companies.find(c=>c.id===activeBrand);if(!company){alert("Please select a company first.");return;}if(BASE_COMPANIES.some(c=>c.name===company.name)){alert("The original IDA and BizBuddy companies cannot be deleted, to protect the base tracker.");return;}const taskCount=allReels.filter(r=>r.company_id===company.id).length;if(!confirm(taskCount?`Delete \"${company.name}\" and its ${taskCount} task(s)? This also deletes their saved progress and cannot be undone.`:`Delete company \"${company.name}\"? This cannot be undone.`))return;const {error}=await supabaseClient.from("companies").delete().eq("id",company.id);if(error){alert("Could not delete company: "+error.message);return;}activeBrand=(companies.find(c=>c.name==="BizBuddy")||companies[0])?.id;await loadTrackerData();});
+(async()=>{const {data:{session}}=await supabaseClient.auth.getSession();if(session?.user)await startApp(session.user);})();
+</script>
+
+<script>
+if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost" || location.hostname === "127.0.0.1")) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js").catch((error) => console.warn("Service worker registration failed:", error));
+  });
+}
+</script>
+
+</body>
+</html>
